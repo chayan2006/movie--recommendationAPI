@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxy Stream</title>
+<!-- Load Tailwind CSS for utility classes -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+/* Custom Fonts */
+:root {
+    --cyan: #00f0ff;
+    --fuchsia: #ec4899;
+    --purple: #a855f7;
+}
+
+/* Add smooth scrolling behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Base Styles (Overwriting Tailwind/Default CSS) */
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    /* Adopted user's radial gradient for body background */
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    color: #f8fafc;
+    overflow-x: hidden;
+}
+
+/* --- NEW: Card Fall-in Animation --- */
+@keyframes fallIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-60px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Movie Card Styles (Adopted user's styles) */
+.movie-card {
+    position: relative; /* Needed for pseudo-elements */
+    overflow: hidden; /* Hide the animated borders outside the card */
+    background: rgba(15, 23, 42, 0.7); /* Darker slate background */
+    backdrop-filter: blur(12px); /* Slightly more blur */
+    border-radius: 18px;
+    padding: 18px;
+    width: 340px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; /* Added border-color transition */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 0 10px rgba(0, 240, 255, 0.1); /* Added subtle inner cyan glow */
+    /* Link the fall-in animation */
+    opacity: 0; /* Start hidden */
+    animation: fallIn 0.5s ease-out forwards;
+}
+.movie-card:hover {
+    transform: translateY(-10px) scale(1.03); /* Add a slight lift up effect */
+    border-color: rgba(0, 240, 255, 0.5); /* Brighten border on hover */
+    /* Multi-layered, multi-colored shadow for a deeper glow */
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5), /* Base shadow for depth */
+                0 0 20px rgba(236, 72, 153, 0.5), /* Fuchsia glow */
+                0 0 40px rgba(0, 240, 255, 0.4); /* Cyan glow */
+    z-index: 10; /* Bring hovered card to front */
+}
+.movie-card img {
+    width: 100%;
+    /* Increased height for bigger image */
+    height: 460px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 3px;
+}
+
+
+/* --- NEW: Side Line Animation for Movie Card --- */
+.movie-card::before, .movie-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    transition: transform 0.4s ease-in-out;
+    transform-origin: center;
+    pointer-events: none; /* Make sure they don't block mouse events */
+    border-radius: 18px; /* Match the card's border radius */
+}
+
+/* Horizontal lines (top/bottom) */
+.movie-card::before {
+    border-top: 2px solid var(--cyan);
+    border-bottom: 2px solid var(--cyan);
+    transform: scaleX(0); /* Initially hidden */
+}
+
+/* Vertical lines (left/right) */
+.movie-card::after {
+    border-left: 2px solid var(--fuchsia);
+    border-right: 2px solid var(--fuchsia);
+    transform: scaleY(0); /* Initially hidden */
+    transition-delay: 0.2s; /* Stagger the animation */
+}
+
+.movie-card:hover::before {
+    transform: scaleX(1); /* Expand horizontally on hover */
+}
+
+.movie-card:hover::after {
+    transform: scaleY(1); /* Expand vertically on hover */
+}
+/* --- END NEW ANIMATION --- */
+
+
+/* --- ENHANCED BACKGROUND ANIMATION CSS --- */
+@keyframes floatAndRotate {
+    0% {
+        /* Added slight rotation on Z axis for more dynamic movement */
+        transform: translate(10vw, 10vh) rotate(0deg) rotateZ(0deg) scale(0.9);
+    }
+    100% {
+        transform: translate(90vw, 90vh) rotate(360deg) rotateZ(30deg) scale(1.1);
+    }
+}
+/* Enhanced appearance for better visibility */
+.bg-poster {
+    position: absolute;
+    width: 280px; /* Slightly larger than previous 250px */
+    height: 400px; /* Slightly larger than previous 350px */
+    object-fit: cover;
+    opacity: 0.18; /* Increased opacity from 0.05 for visibility */
+    /* Reduced blur, added neon hue-rotate and brightness for effect */
+    filter: blur(2px) hue-rotate(300deg) brightness(1.2);
+    animation: floatAndRotate 35s linear infinite alternate;
+}
+
+/* --- GALAXY STREAM LOGO STYLES --- */
+#g-logo-container {
+    width: 150px;
+    height: 150px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: none;
+    z-index: 20; /* Ensure G is on top of posters */
+}
+
+/* Stylized G shape using border-radius and pseudo-elements */
+#g-shape {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 15px solid var(--cyan);
+    border-top-color: transparent;
+    border-right-color: transparent;
+    box-shadow: 0 0 40px var(--cyan), 0 0 20px var(--fuchsia); /* Enhanced Glow */
+    opacity: 0;
+    transform: scale(0.5);
+    /* Animation is now controlled by JavaScript for correct sequencing */
+}
+#g-shape::after {
+    content: '';
+    position: absolute;
+    bottom: 30px;
+    right: -5px;
+    width: 30px;
+    height: 15px;
+    background: var(--cyan);
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 0 10px var(--cyan);
+}
+@keyframes g-reveal {
+    0% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* --- Sequential Poster Animation Styles --- */
+.splash-poster {
+    position: absolute;
+    width: 200px; /* INCREASED SIZE for bolder animation */
+    height: 300px; /* INCREASED SIZE for bolder animation */
+    object-fit: cover;
+    border-radius: 8px;
+    opacity: 0;
+    /* Updated transform for better initial slide and rotation */
+    transform: scale(0.5) translateY(50px) rotate(0deg);
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+    filter: saturate(1.2) brightness(1.2);
+    animation: posterSlideIn 2.0s ease-out forwards; /* Increased duration for smoother fade out */
+    z-index: 10;
+}
+@keyframes posterSlideIn {
+    0% { opacity: 0; transform: scale(0.5) translateY(50px) rotate(5deg); }
+    30% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); }
+    70% { opacity: 1; } /* Hold */
+    100% { opacity: 0; transform: scale(1.1) rotate(-5deg); } /* Fade out with slight rotation */
+}
+
+/* Comedy & Horror remain unchanged */
+.comedy-emoji {
+    position: absolute;
+    font-size: 30px;
+    animation: bounceFall 2s linear forwards;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}
+@keyframes bounceFall {
+    0% { top: -50px; opacity: 0; transform: rotate(0deg); }
+    20% { opacity: 1; }
+    80% { top: calc(100% - 50px); transform: rotate(360deg); }
+    100% { top: 100%; opacity: 0; transform: rotate(720deg); }
+}
+.horror-smoke {
+    position: absolute;
+    width: 100px; height: 100px;
+    background: rgba(50, 50, 50, 0.7);
+    border-radius: 50%;
+    filter: blur(20px);
+    animation: fadeAndGrow 3s ease-out forwards;
+}
+@keyframes fadeAndGrow {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: scale(3); opacity: 0; }
+}
+
+/* --- Animated Login Button Style --- */
+.login-btn-animated {
+    position: relative;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 8px;
+    color: var(--cyan);
+    background: transparent;
+    border: 2px solid var(--fuchsia);
+    overflow: hidden;
+    transition: all 0.4s ease;
+    text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.login-btn-animated:hover {
+    color: #fff;
+    box-shadow: 0 0 15px var(--fuchsia), 0 0 25px var(--fuchsia);
+    transform: translateY(-2px);
+    border-color: var(--cyan);
+}
+.login-btn-animated::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent 40%, var(--cyan) 50%, var(--fuchsia) 60%, transparent 80%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    transform: scaleX(0);
+}
+.login-btn-animated:hover::before {
+    opacity: 0.8;
+    transform: scaleX(1);
+    animation: sweep 1s ease-out infinite;
+}
+@keyframes sweep {
+    0% { transform: scaleX(1) translateX(-100%); }
+    100% { transform: scaleX(1) translateX(100%); }
+}
+
+/* --- NEW STYLES for Plot on Image Hover --- */
+.image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.plot-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 20%, rgba(0,0,0,0));
+    backdrop-filter: blur(2px);
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+    text-align: left;
+    pointer-events: none;
+}
+
+.image-container:hover .plot-overlay {
+    opacity: 1;
+}
+
+.image-container img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.image-container:hover img {
+    transform: scale(1.1);
+}
+
+/* --- MODAL Styles (Shared by AI and Settings) --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.modal-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+}
+.modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 90vw;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 30px rgba(236, 72, 153, 0.3);
+    z-index: 1001;
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
+}
+.modal-backdrop.active .modal-content {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: all;
+}
+.modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    color: white;
+    font-size: 20px;
+    border: 1px solid var(--fuchsia);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.modal-close-btn:hover {
+    background: var(--fuchsia);
+    transform: rotate(90deg);
+    box-shadow: 0 0 10px var(--fuchsia);
+}
+
+/* --- NEW: Settings Modal Toggle Switch --- */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+.toggle-checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #374151; /* gray-700 */
+    transition: .4s;
+    border-radius: 28px;
+}
+.toggle-label:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+.toggle-checkbox:checked + .toggle-label {
+    background-color: var(--fuchsia);
+}
+.toggle-checkbox:checked + .toggle-label:before {
+    transform: translateX(22px);
+}
+
+</style>
+</head>
+<body>
+
+<!-- CINEMATIC SPLASH SCREEN (POSTER REVEAL & 'G' REVEAL) -->
+<div id="splash-screen" class="fixed inset-0 bg-black z-[999] flex justify-center items-center opacity-100 transition-opacity duration-700 ease-in-out">
+    <!-- CRITICAL: G-LOGO CONTAINER IS NOW ABSOLUTELY POSITIONED IN THE CENTER -->
+    <div id="g-logo-container" class="w-40 h-40 relative transform" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+        <!-- G-Shape is here -->
+        <div id="g-shape"></div>
+    </div>
+</div>
+
+<!-- Navbar -->
+<nav class="flex justify-between items-center px-8 py-4 bg-black/40 backdrop-blur-md sticky top-0 z-50">
+  <!-- Left Side: Home Link -->
+  <div>
+      <a href="#" class="text-2xl font-bold text-gray-100 hover:text-cyan-400 transition" style="font-family: 'Orbitron', sans-serif;">Home</a>
+  </div>
+
+  <!-- Right Side: Navigation Links -->
+  <div class="flex gap-6 items-center">
+    <a href="#about" class="text-gray-300 hover:text-fuchsia-400 transition">About</a>
+    <a href="#" id="settings-btn" class="text-gray-300 hover:text-fuchsia-400 transition">Settings</a>
+    <a href="#" id="login-btn" class="login-btn-animated">Log In</a>
+  </div>
+</nav>
+
+<div class="container mx-auto p-6 text-center">
+  <!-- Upgraded Title with Aesthetic Glow -->
+  <h1 class="text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-purple-600 drop-shadow-[0_0_25px_rgba(236,72,153,0.8)] animate-pulse mb-4">
+    ✨ GALAXY STREAM ✨
+  </h1>
+  <p class="text-lg text-gray-300 italic tracking-wide mb-12">Your Portal to the Universe of Movies 🚀</p>
+  
+  <!-- NEW: Featured Movie Banner -->
+  <div id="featured-movie-banner" class="mb-12"></div>
+
+  <!-- Search Form -->
+  <form class="flex flex-wrap justify-center gap-4 mb-12" id="search-form">
+    <input type="text" id="search-input" class="border border-cyan-400 rounded-lg px-4 py-3 bg-slate-900 text-white focus:outline-none focus:ring-4 focus:ring-fuchsia-500/70 w-72" placeholder="🔎 Search a movie title...">
+
+    <!-- NEW: Genre Select -->
+    <select id="genre-select" class="border border-cyan-400 rounded-lg px-4 py-3 bg-slate-900 text-white focus:outline-none focus:ring-4 focus:ring-fuchsia-500/70 w-72">
+        <option value="">All Genres</option>
+        <option value="Action">Action</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Drama">Drama</option>
+        <option value="Thriller">Thriller</option>
+        <option value="Sci-Fi">Sci-Fi</option>
+        <option value="Horror">Horror</option>
+    </select>
+
+    <!-- NEW: Type Select -->
+    <select id="type-select" class="border border-cyan-400 rounded-lg px-4 py-3 bg-slate-900 text-white focus:outline-none focus:ring-4 focus:ring-fuchsia-500/70 w-72">
+        <option value="">All Types</option>
+        <option value="movie">Movie</option>
+        <option value="series">Series</option>
+    </select>
+
+    <button type="submit" class="bg-gradient-to-r from-cyan-500 to-fuchsia-600 px-8 py-3 rounded-xl font-bold text-white shadow-xl hover:scale-105 transition">Search</button>
+    <button type="button" id="reset-btn" class="bg-gray-700 px-8 py-3 rounded-xl font-bold text-white hover:bg-gray-600 transition">Reset</button>
+  </form>
+
+  <!-- Loading Indicator -->
+  <div id="loading-indicator" class="hidden text-xl text-cyan-400 mb-6">
+    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-cyan-400 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    Fetching cosmic data...
+  </div>
+
+  <!-- Movies Container -->
+  <div id="movies" class="flex flex-wrap justify-center gap-10"></div>
+  <p id="error-message" class="text-red-400 mt-6 hidden">❌ Movie not found. Try another title!</p>
+</div>
+
+<!-- About Section -->
+<section id="about" class="bg-black/40 py-16 px-6 text-center">
+  <h2 class="text-5xl font-bold text-fuchsia-400 mb-6">About Galaxy Stream</h2>
+  <p class="max-w-3xl mx-auto text-gray-300 text-lg leading-relaxed">
+    Galaxy Stream is your cosmic portal to discover, explore, and learn about your favorite movies. Using the powerful OMDb API, we fetch live movie data including posters, ratings, genres, and plots. But we don't stop there. Our integrated AI Movie Assistant, powered by Google's Gemini, takes your experience to the next level. Generate fun facts, discover similar movies, get simple plot explanations, and even create exciting alternative endings. Whether you're a casual viewer or a film aficionado, Galaxy Stream is designed to help you dive deeper into the cinematic universe!
+  </p>
+  <p class="max-w-3xl mx-auto text-gray-400 text-md leading-relaxed mt-6">
+    Developed by Chayan Khatua (<a href="mailto:chayankhatua2006@gmail.com" class="text-cyan-400 hover:underline">chayankhatua2006@gmail.com</a>) and Sindhant Dadwal (<a href="mailto:shivadadwal432@gmail.com" class="text-cyan-400 hover:underline">shivadadwal432@gmail.com</a>).
+  </p>
+</section>
+
+<!-- Dedicated Container for Background Animation -->
+<div id="bg-animation-container"></div>
+<!-- Animation Overlays -->
+<div class="animation-overlay"></div>
+
+<!-- AI ASSISTANT MODAL -->
+<div id="ai-modal-backdrop" class="modal-backdrop">
+    <div id="ai-modal-content" class="modal-content p-6">
+        <button id="ai-modal-close" class="modal-close-btn">&times;</button>
+        <div id="ai-modal-body" class="text-left">
+            <!-- Content will be injected by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settings-modal-backdrop" class="modal-backdrop">
+    <div id="settings-modal-content" class="modal-content p-6">
+        <button id="settings-modal-close" class="modal-close-btn">&times;</button>
+        <h2 class="text-3xl font-bold text-cyan-400 mb-6 text-center font-orbitron">Settings</h2>
+        <div id="settings-modal-body" class="text-left space-y-6">
+            <!-- Setting Option 1: Theme -->
+            <div class="flex justify-between items-center p-4 bg-slate-800/50 rounded-lg border border-white/10">
+                <label for="theme-select" class="font-bold text-gray-200">Theme</label>
+                <select id="theme-select" class="border border-cyan-400 rounded-lg px-3 py-2 bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500/70">
+                    <option value="dark">Galaxy Dark</option>
+                    <option value="light" disabled>Nebula Light (Coming Soon)</option>
+                </select>
+            </div>
+            <!-- Setting Option 2: Background Animation Toggle -->
+            <div class="flex justify-between items-center p-4 bg-slate-800/50 rounded-lg border border-white/10">
+                <label for="bg-animation-toggle" class="font-bold text-gray-200">Background Animations</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="bg-animation-toggle" class="toggle-checkbox" checked>
+                    <label for="bg-animation-toggle" class="toggle-label"></label>
+                </div>
+            </div>
+            <!-- Setting Option 3: Reset Button -->
+             <div class="flex justify-between items-center p-4 bg-slate-800/50 rounded-lg border border-white/10">
+                <span class="font-bold text-gray-200">Clear Local Cache</span>
+                <button id="clear-cache-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition">Clear Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- NEW: LOGIN MODAL -->
+<div id="login-modal-backdrop" class="modal-backdrop">
+    <div id="login-modal-content" class="modal-content p-8">
+        <button id="login-modal-close" class="modal-close-btn">&times;</button>
+        <h2 class="text-4xl font-bold text-cyan-400 mb-6 text-center font-orbitron">Galactic Access</h2>
+        <div id="login-modal-body">
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="email" class="text-sm font-bold text-gray-300">Email</label>
+                    <input type="email" id="email" required class="w-full mt-2 border border-cyan-400 rounded-lg px-4 py-3 bg-slate-900 text-white focus:outline-none focus:ring-4 focus:ring-fuchsia-500/70">
+                </div>
+                <div>
+                    <label for="password" class="text-sm font-bold text-gray-300">Password</label>
+                    <input type="password" id="password" required class="w-full mt-2 border border-cyan-400 rounded-lg px-4 py-3 bg-slate-900 text-white focus:outline-none focus:ring-4 focus:ring-fuchsia-500/70">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-fuchsia-600 px-8 py-3 rounded-xl font-bold text-white shadow-xl hover:scale-105 transition">Log In</button>
+            </form>
+            <div class="text-center my-4 text-gray-400">OR</div>
+            <button id="guest-btn" class="w-full bg-gray-700 px-8 py-3 rounded-xl font-bold text-white hover:bg-gray-600 transition">Continue as Guest</button>
+            <div id="login-message" class="text-center mt-4 text-green-400"></div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+const API_KEY = "6b3122d8"; // OMDb API key
+
+// --- GEMINI API CONFIGURATION ---
+const GEMINI_API_KEY = "AIzaSyDdM6h4HDQH7pgqbR9SafsgjHNyGTtDLNY"; // User-provided API Key
+const GEMINI_MODEL = "gemini-2.5-flash-preview-05-20";
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+// ---------------------------------
+
+// DOM elements
+const form = document.getElementById("search-form");
+const input = document.getElementById("search-input");
+const moviesDiv = document.getElementById("movies");
+const errorMessage = document.getElementById("error-message");
+const loadingIndicator = document.getElementById("loading-indicator");
+const container = document.querySelector(".container");
+const resetBtn = document.getElementById("reset-btn");
+const bgContainer = document.getElementById("bg-animation-container");
+const genreSelect = document.getElementById("genre-select");
+const typeSelect = document.getElementById("type-select");
+const splashScreen = document.getElementById("splash-screen");
+const overlay = document.querySelector(".animation-overlay");
+
+// AI Modal DOM elements
+const modalBackdrop = document.getElementById('ai-modal-backdrop');
+const modalBody = document.getElementById('ai-modal-body');
+const modalCloseBtn = document.getElementById('ai-modal-close');
+let currentMovieDataForModal = {}; // Holds data for the active modal
+
+// Settings Modal DOM elements
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModalBackdrop = document.getElementById('settings-modal-backdrop');
+const settingsModalCloseBtn = document.getElementById('settings-modal-close');
+const bgAnimationToggle = document.getElementById('bg-animation-toggle');
+const clearCacheBtn = document.getElementById('clear-cache-btn');
+
+// Login Modal DOM elements
+const loginBtn = document.getElementById('login-btn');
+const loginModalBackdrop = document.getElementById('login-modal-backdrop');
+const loginModalCloseBtn = document.getElementById('login-modal-close');
+const loginForm = document.getElementById('login-form');
+const guestBtn = document.getElementById('guest-btn');
+const loginMessage = document.getElementById('login-message');
+
+// EXPANDED MOVIE LIST FOR ANIMATION COVERAGE
+const defaultMovies = ["Inception", "Interstellar", "The Dark Knight", "Parasite", "Joker", "Avengers: Endgame", "Titanic", "The Matrix", "Forrest Gump", "Shutter Island", "Dune", "Blade Runner 2049", "Mad Max: Fury Road", "Léon: The Professional", "Whiplash", "Pulp Fiction", "The Godfather", "Fight Club", "The Lord of the Rings: The Fellowship of the Ring", "Spirited Away", "The Shawshank Redemption", "The Silence of the Lambs", "Saving Private Ryan", "Gladiator", "The Departed", "The Prestige", "Se7en", "Alien", "Terminator 2: Judgment Day", "Back to the Future", "Breaking Bad", "Game of Thrones", "Stranger Things", "The Mandalorian", "The Office", "Peaky Blinders", "Black Mirror"];
+
+let initialMovieData = [];
+
+/**
+ * Toggles the visibility of the loading indicator.
+ * @param {boolean} show
+ */
+function setLoading(show) {
+    loadingIndicator.classList.toggle("hidden", !show);
+    errorMessage.classList.add("hidden");
+}
+
+/**
+ * Creates the HTML element for a single movie card.
+ * @param {Object} movie - The movie data object from OMDb API.
+ * @returns {HTMLElement} The constructed div element.
+ */
+function createMovieCardHTML(movie) {
+    const poster = movie.Poster !== "N/A"
+        ? movie.Poster
+        : 'https://placehold.co/340x460/1f1b24/00f0ff?text=NO+POSTER';
+
+    const fullPlot = movie.Plot || 'Plot summary not available.';
+    const rating = movie.imdbRating !== "N/A" ? movie.imdbRating + '/10' : 'N/A';
+    const genre = movie.Genre || 'N/A';
+    const actors = movie.Actors || 'N/A';
+
+    // Encode data for the modal
+    const movieData = {
+        title: movie.Title,
+        year: movie.Year || 'N/A',
+        poster: poster,
+        plot: btoa(fullPlot),
+        director: btoa(movie.Director || 'N/A'),
+        actors: btoa(actors),
+        genre: genre,
+        rating: rating,
+    };
+
+    const trailerSearchQuery = `${movie.Title} ${movie.Year || ''} official trailer`;
+    const youtubeLink = `https://www.youtube.com/results?search_query=${encodeURIComponent(trailerSearchQuery)}`;
+
+    const div = document.createElement("div");
+    div.className = "movie-card shadow-lg";
+    
+    // Store all movie data in a single attribute on the assistant button
+    // This simplifies event handling later
+    div.innerHTML = `
+        <h2 class="text-2xl font-bold text-cyan-400 mb-3 drop-shadow-md">${movie.Title} (${movie.Year || 'N/A'})</h2>
+        
+        <div class="image-container">
+             <img src="${poster}" alt="${movie.Title}" onerror="this.onerror=null; this.src='https://placehold.co/340x460/1f1b24/00f0ff?text=NO+POSTER';">
+             <div class="plot-overlay">
+                <div class="w-full">
+                    <p class="text-base font-bold"><strong>📅 Year:</strong> ${movie.Year || 'N/A'}</p>
+                    <p class="text-base font-bold"><strong>⭐ Rating:</strong> ${rating}</p>
+                    <p class="text-base font-bold"><strong>🎬 Genre:</strong> ${genre}</p>
+                    <p class="text-sm italic mt-2">${fullPlot}</p>
+                </div>
+             </div>
+        </div>
+
+        <div class="mt-4 flex flex-col gap-2">
+            <a href="${youtubeLink}" target="_blank" class="block w-full text-center bg-red-600 hover:bg-red-700 p-3 rounded-lg text-white font-bold text-base transition">
+                ▶️ Watch Trailer
+            </a>
+            <button class="ai-assistant-btn bg-gradient-to-r from-cyan-500 to-fuchsia-600 p-3 rounded-lg text-white font-bold text-base transition hover:scale-105"
+                    data-movie='${JSON.stringify(movieData)}'>
+                ✨ AI Movie Assistant
+            </button>
+        </div>
+    `;
+    return div;
+}
+
+
+/**
+ * Fetches full movie details using the IMDb ID.
+ * @param {string} imdbId - The IMDb ID (tt...) of the movie.
+ * @returns {Promise<Object|null>} Full movie object or null on error/not found.
+ */
+async function fetchMovieById(imdbId) {
+    try {
+        const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbId}&plot=full`);
+        const data = await res.json();
+        return data.Response === "True" ? data : null;
+    } catch (e) {
+        console.error("Error fetching movie by ID:", e);
+        return null;
+    }
+}
+
+/**
+ * Fetches movies based on a query.
+ * @param {string} query - Single search term.
+ * @returns {Promise<Object[]>} Array of full movie objects.
+ */
+async function fetchMovies(query) {
+    const searchRes = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(query)}`);
+    const searchData = await searchRes.json();
+
+    if (searchData.Response === "False" || !searchData.Search) {
+        return []; // No results found
+    }
+
+    const topResults = searchData.Search.slice(0, 10);
+    const detailPromises = topResults.map(item => fetchMovieById(item.imdbID));
+
+    return (await Promise.all(detailPromises)).filter(movie => movie);
+}
+
+// --- GEMINI API INTEGRATION FUNCTIONS ---
+
+/**
+ * Executes the LLM call with exponential backoff.
+ * @param {Object} payload - The Gemini API request payload.
+ * @returns {Promise<string>} The generated text.
+ */
+async function fetchGeminiContent(payload) {
+    let response;
+    let attempts = 0;
+    const maxAttempts = 3;
+    
+    while (attempts < maxAttempts) {
+        attempts++;
+        try {
+            response = await fetch(GEMINI_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (response.ok) break;
+        } catch (error) {
+            console.warn(`Attempt ${attempts} failed, retrying...`);
+            if (attempts < maxAttempts) {
+                await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempts) * 100));
+            }
+        }
+    }
+    
+    if (!response || !response.ok) {
+        throw new Error("Failed to fetch from Gemini API after multiple retries.");
+    }
+
+    const result = await response.json();
+    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "🌌 Failed to conjure insight.";
+    // Basic Markdown to HTML conversion
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+}
+
+
+// --- Action Animation Helpers ---
+function triggerGenreAnimation(genre) {
+    overlay.innerHTML = "";
+    setTimeout(() => { overlay.innerHTML = ""; }, 4000);
+
+    if (genre.includes("Comedy")) {
+        const emojis = ['😂', '🤣', '🥳', '😎', '😜', '🍿'];
+        for (let i = 0; i < 15; i++) {
+            const confetti = document.createElement("div");
+            confetti.className = "comedy-emoji";
+            confetti.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            confetti.style.left = `${Math.random() * window.innerWidth}px`;
+            confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+            overlay.appendChild(confetti);
+        }
+    } else if (genre.includes("Horror")) {
+         for (let i = 0; i < 5; i++) {
+            const smoke = document.createElement("div");
+            smoke.className = "horror-smoke";
+            smoke.style.left = `${Math.random() * window.innerWidth}px`;
+            smoke.style.top = `${Math.random() * window.innerHeight}px`;
+            smoke.style.animationDelay = `${Math.random() * 0.5}s`;
+            overlay.appendChild(smoke);
+        }
+    }
+}
+
+
+/**
+ * Main function to manage display state and render movie results.
+ * @param {string|null} query - The search query or null for default display.
+ * @param {boolean} isDefault - True if this is the initial or reset display.
+ */
+async function displayMovies(query, isDefault = false) {
+    moviesDiv.innerHTML = "";
+    if (!isDefault) setLoading(true);
+
+    const oldResultMsg = document.getElementById("result-message");
+    if (oldResultMsg) oldResultMsg.remove();
+
+    // Determine the source of movies: pre-fetched initial data or a new API search
+    const sourceMovies = isDefault ? initialMovieData : await fetchMovies(query);
+    
+    if (!isDefault) setLoading(false);
+
+    // If the search returned no results, show an error.
+    if (sourceMovies.length === 0 && !isDefault) {
+        errorMessage.classList.remove("hidden");
+        return;
+    }
+
+    const selectedGenre = genreSelect.value;
+    const selectedType = typeSelect.value;
+    let renderedCount = 0;
+
+    // Filter the source movies based on the selected genre and type
+    const filteredMovies = sourceMovies.filter(movie => {
+        const passesGenre = !selectedGenre || (movie.Genre && movie.Genre.includes(selectedGenre));
+        const passesType = !selectedType || (movie.Type && movie.Type.toLowerCase() === selectedType.toLowerCase());
+        return passesGenre && passesType;
+    });
+
+    // For the default view, we only want to show a subset (e.g., first 10) of the filtered results
+    const moviesToDisplay = isDefault ? filteredMovies.slice(0, 10) : filteredMovies;
+
+    moviesToDisplay.forEach((movie, index) => {
+        const card = createMovieCardHTML(movie);
+        card.style.animationDelay = `${index * 0.07}s`; // Stagger the animation
+        moviesDiv.appendChild(card);
+        renderedCount++;
+        if (renderedCount === 1) { // Trigger animation based on first result
+             triggerGenreAnimation(movie.Genre || "");
+        }
+    });
+
+    if (renderedCount === 0) {
+        errorMessage.textContent = "No movies or series match the selected criteria. Try resetting the filters.";
+        errorMessage.classList.remove("hidden");
+    } else if (!isDefault) {
+        const resultMsg = document.createElement("p");
+        resultMsg.id = "result-message";
+        resultMsg.className = "text-xl text-cyan-400 italic tracking-wide mb-12 mt-6";
+        resultMsg.textContent = `Showing ${renderedCount} results for "${query}"`;
+        container.insertBefore(resultMsg, moviesDiv);
+    }
+}
+
+
+/**
+ * Populates the background with subtle, floating movie posters.
+ */
+function animateBackgroundPosters() {
+    bgContainer.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: -2;`;
+    const moviesForBg = initialMovieData.slice(0, 15);
+    moviesForBg.forEach((movie) => {
+        if (movie && movie.Poster && movie.Poster !== "N/A") {
+            const img = document.createElement("img");
+            img.src = movie.Poster;
+            img.alt = "";
+            img.classList.add('bg-poster');
+            img.style.transform = `translate(${Math.random() * 100}vw, ${Math.random() * 100}vh) rotate(${Math.random() * 360}deg)`;
+            img.style.animationDuration = `${25 + Math.random() * 15}s`;
+            img.style.animationDelay = `${Math.random() * 15}s`;
+            bgContainer.appendChild(img);
+        }
+    });
+}
+
+/** Generates a short, synthetic "Tudum" sound effect. */
+function playTudumSound() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        const oscillator = audioCtx.createOscillator();
+        oscillator.frequency.setValueAtTime(80, audioCtx.currentTime);
+        oscillator.type = 'sine';
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        const now = audioCtx.currentTime;
+        gainNode.gain.linearRampToValueAtTime(0.5, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        oscillator.stop(now + 0.3);
+    } catch (e) { console.warn("Audio playback blocked or unsupported:", e); }
+}
+
+/** Creates and animates the sequential movie poster reveal. */
+function createSequentialPosterAnimation() {
+    const postersToShow = initialMovieData.slice(0, 30).filter(m => m && m.Poster !== "N/A");
+    postersToShow.forEach((movie, index) => {
+        const img = document.createElement('img');
+        img.src = movie.Poster;
+        img.classList.add('splash-poster');
+        img.style.left = `${(index % 6) * 16.66}%`;
+        img.style.top = `${Math.floor(index / 6) * 20}%`;
+        img.style.animationDelay = `${index * 0.05}s`;
+        splashScreen.appendChild(img);
+    });
+}
+
+/** Fetches all initial data for animations and default display. */
+async function fetchInitialData() {
+    const detailPromises = defaultMovies.map(title =>
+        fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&t=${encodeURIComponent(title)}&plot=full`)
+        .then(res => res.json())
+        .then(data => data.Response === "True" ? data : null)
+        .catch(e => { console.error("Error fetching initial movie:", e); return null; })
+    );
+    initialMovieData = (await Promise.all(detailPromises)).filter(movie => movie);
+}
+
+// --- MODAL FUNCTIONS ---
+function openModal(movieData) {
+    currentMovieDataForModal = movieData;
+    modalBody.innerHTML = `
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex-shrink-0">
+                <img src="${movieData.poster}" alt="${movieData.title}" class="rounded-lg w-48 mx-auto">
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold text-cyan-400">${movieData.title} (${movieData.year})</h2>
+                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button data-task="trivia" class="ai-task-btn bg-white/10 hover:bg-cyan-500/50 p-3 rounded-lg border border-cyan-400 transition">Generate Fun Facts</button>
+                    <button data-task="similar" class="ai-task-btn bg-white/10 hover:bg-cyan-500/50 p-3 rounded-lg border border-cyan-400 transition">Suggest Similar Movies</button>
+                    <button data-task="ending" class="ai-task-btn bg-white/10 hover:bg-cyan-500/50 p-3 rounded-lg border border-cyan-400 transition">Write Alt. Ending</button>
+                    <button data-task="explain" class="ai-task-btn bg-white/10 hover:bg-cyan-500/50 p-3 rounded-lg border border-cyan-400 transition">Explain the Plot</button>
+                </div>
+                 <div class="mt-4">
+                    <textarea id="custom-question-input" class="w-full p-2 rounded-lg bg-slate-800 text-white border border-fuchsia-400/50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" placeholder="Or ask your own question..."></textarea>
+                    <button data-task="custom" class="ai-task-btn w-full mt-2 bg-fuchsia-600 hover:bg-fuchsia-700 p-3 rounded-lg text-white font-bold text-base transition">Ask AI Assistant 🚀</button>
+                </div>
+            </div>
+        </div>
+        <div id="ai-result-area" class="mt-4 p-4 bg-black/30 border border-fuchsia-500/30 rounded-lg min-h-[100px] text-gray-200 shadow-xl">
+            Select an option or ask a question to begin...
+        </div>
+    `;
+    modalBackdrop.classList.add('active');
+}
+function closeModal() {
+    modalBackdrop.classList.remove('active');
+}
+function openSettingsModal() {
+    settingsModalBackdrop.classList.add('active');
+}
+function closeSettingsModal() {
+    settingsModalBackdrop.classList.remove('active');
+}
+function openLoginModal() {
+    loginModalBackdrop.classList.add('active');
+}
+function closeLoginModal() {
+    loginModalBackdrop.classList.remove('active');
+}
+
+async function handleAIAssistant(task) {
+    const resultArea = document.getElementById('ai-result-area');
+    resultArea.innerHTML = `<p class="animate-pulse text-cyan-400">Consulting the cosmic archives...</p>`;
+
+    const { title, plot, genre, director, actors } = currentMovieDataForModal;
+    const decodedPlot = atob(plot);
+    let systemPrompt = "You are a helpful and enthusiastic movie expert AI assistant.";
+    let userQuery = "";
+
+    switch (task) {
+        case 'trivia':
+            userQuery = `Provide 3 interesting and little-known fun facts about the movie "${title}".`;
+            break;
+        case 'similar':
+            userQuery = `Based on the movie "${title}" (a ${genre} film), suggest 5 other movies that fans would likely enjoy. Give a one-sentence reason for each suggestion.`;
+            break;
+        case 'ending':
+            systemPrompt = "You are a creative screenwriter. Write a short, exciting, and dramatically different alternative ending to the provided movie plot. The ending must be a single paragraph.";
+            userQuery = `Movie Title: ${title}. Full Plot: ${decodedPlot}. Write an alternative ending now.`;
+            break;
+        case 'explain':
+            userQuery = `Explain the plot of "${title}" in simple, easy-to-understand terms. Here is the full plot summary: ${decodedPlot}`;
+            break;
+        case 'custom':
+            const customQuestion = document.getElementById('custom-question-input').value.trim();
+            if (customQuestion.length < 5) {
+                resultArea.innerHTML = `<p class="text-red-400">Please type a longer question!</p>`;
+                return;
+            }
+            const persona = atob(director) !== 'N/A' ? atob(director) : atob(actors).split(',')[0].trim();
+            systemPrompt = `You are ${persona}, the primary creative force behind the movie "${title}". Answer the user's question in character, using an insightful, enthusiastic, and brief tone.`;
+            userQuery = `As ${persona}, answer this question: ${customQuestion}`;
+            break;
+    }
+
+    const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+    };
+
+    try {
+        const text = await fetchGeminiContent(payload);
+        resultArea.innerHTML = text;
+    } catch (e) {
+        resultArea.innerHTML = `<p class="text-red-400">${e.message}</p>`;
+    }
+}
+
+
+// --- Event Listeners and Initial Load ---
+window.addEventListener("DOMContentLoaded", async () => {
+    await fetchInitialData();
+    displayMovies(null, true); 
+    animateBackgroundPosters();
+    createSequentialPosterAnimation();
+
+    // NEW: Display Featured Movie
+    const featuredMovieBanner = document.getElementById('featured-movie-banner');
+    const today = new Date();
+    const featuredMovie = initialMovieData[today.getDate() % initialMovieData.length];
+    if(featuredMovie) {
+        featuredMovieBanner.innerHTML = `
+            <div class="p-4 rounded-xl bg-gradient-to-r from-cyan-900/50 via-slate-800/50 to-fuchsia-900/50 border border-cyan-500/30">
+                <h3 class="text-2xl font-bold text-fuchsia-400 font-orbitron">Featured Movie for ${today.toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}</h3>
+                <p class="text-lg text-gray-200 mt-1">${featuredMovie.Title} (${featuredMovie.Year})</p>
+            </div>
+        `;
+    }
+    
+    const posterAnimationDuration = 2.0;
+    const gRevealDuration = 1.5;
+    const finalFadeDuration = 700;
+    const lastPosterAnimationEnd = (29 * 0.05 + posterAnimationDuration) * 1000;
+
+    setTimeout(() => {
+        document.getElementById('g-shape').style.animation = `g-reveal ${gRevealDuration}s ease-out forwards`;
+    }, lastPosterAnimationEnd);
+    
+    setTimeout(() => {
+        playTudumSound();
+        splashScreen.style.opacity = '0';
+        setTimeout(() => splashScreen.remove(), finalFadeDuration);
+    }, lastPosterAnimationEnd + gRevealDuration * 1000);
+});
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const query = input.value.trim();
+    if (query) {
+        displayMovies(query, false);
+    }
+});
+
+resetBtn.addEventListener("click", () => {
+    input.value = "";
+    genreSelect.value = "";
+    typeSelect.value = "";
+    displayMovies(null, true);
+});
+
+genreSelect.addEventListener("change", () => displayMovies(input.value.trim() || null, true));
+typeSelect.addEventListener("change", () => displayMovies(input.value.trim() || null, true));
+
+// Main delegated click handler
+document.body.addEventListener('click', (e) => {
+    // AI Assistant Button on Movie Card
+    if (e.target.classList.contains('ai-assistant-btn')) {
+        const movieData = JSON.parse(e.target.dataset.movie);
+        openModal(movieData);
+    }
+    // Buttons inside the AI Modal
+    if (e.target.classList.contains('ai-task-btn')) {
+        const task = e.target.dataset.task;
+        handleAIAssistant(task);
+    }
+    // Closing the modals
+    if (e.target === modalBackdrop || e.target === modalCloseBtn) {
+        closeModal();
+    }
+    if (e.target === settingsModalBackdrop || e.target === settingsModalCloseBtn) {
+        closeSettingsModal();
+    }
+    if (e.target === loginModalBackdrop || e.target === loginModalCloseBtn || e.target === guestBtn) {
+        closeLoginModal();
+    }
+});
+
+// Smooth scroll for navigation links
+document.querySelectorAll('nav a').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        
+        // Handle nav buttons that open modals
+        if (this.id === 'settings-btn') {
+            openSettingsModal();
+            return;
+        }
+         if (this.id === 'login-btn') {
+            openLoginModal();
+            return;
+        }
+        
+        // Handle anchor links for scrolling
+        if (targetId && targetId.startsWith('#') && targetId.length > 1) {
+             const targetElement = document.querySelector(targetId);
+             if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+             }
+        } else { // Handle home link
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+});
+
+// Functionality for settings controls
+bgAnimationToggle.addEventListener('change', () => {
+    const displayValue = bgAnimationToggle.checked ? 'block' : 'none';
+    document.querySelectorAll('.bg-poster').forEach(poster => poster.style.display = displayValue);
+});
+
+clearCacheBtn.addEventListener('click', () => {
+    const originalText = clearCacheBtn.textContent;
+    clearCacheBtn.textContent = 'Cleared!';
+    clearCacheBtn.disabled = true;
+    setTimeout(() => {
+        clearCacheBtn.textContent = originalText;
+        clearCacheBtn.disabled = false;
+    }, 2000);
+});
+
+// Login Form functionality
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    loginMessage.textContent = 'Login Successful! Welcome back.';
+    loginMessage.classList.remove('text-red-400');
+    loginMessage.classList.add('text-green-400');
+    
+    setTimeout(() => {
+        closeLoginModal();
+        loginMessage.textContent = ''; // Clear message after closing
+    }, 1500);
+});
+
+
+</script>
+</body>
+</html>
