@@ -1,0 +1,385 @@
+/* Custom Fonts */
+:root {
+    --cyan: #00f0ff;
+    --fuchsia: #ec4899;
+    --purple: #a855f7;
+}
+
+/* Add smooth scrolling behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Base Styles (Overwriting Tailwind/Default CSS) */
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    color: #f8fafc;
+    overflow-x: hidden;
+}
+
+/* --- Card Fall-in Animation --- */
+@keyframes fallIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-60px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Movie Card Styles */
+.movie-card {
+    position: relative;
+    overflow: hidden;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 18px;
+    width: 340px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 0 10px rgba(0, 240, 255, 0.1);
+    opacity: 0;
+    animation: fallIn 0.5s ease-out forwards;
+}
+.movie-card:hover {
+    transform: translateY(-10px) scale(1.03);
+    border-color: rgba(0, 240, 255, 0.5);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5),
+                0 0 20px rgba(236, 72, 153, 0.5),
+                0 0 40px rgba(0, 240, 255, 0.4);
+    z-index: 10;
+}
+.movie-card img {
+    width: 100%;
+    height: 460px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 3px;
+}
+
+/* --- Side Line Animation for Movie Card --- */
+.movie-card::before, .movie-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    transition: transform 0.4s ease-in-out;
+    transform-origin: center;
+    pointer-events: none;
+    border-radius: 18px;
+}
+.movie-card::before {
+    border-top: 2px solid var(--cyan);
+    border-bottom: 2px solid var(--cyan);
+    transform: scaleX(0);
+}
+.movie-card::after {
+    border-left: 2px solid var(--fuchsia);
+    border-right: 2px solid var(--fuchsia);
+    transform: scaleY(0);
+    transition-delay: 0.2s;
+}
+.movie-card:hover::before {
+    transform: scaleX(1);
+}
+.movie-card:hover::after {
+    transform: scaleY(1);
+}
+
+/* --- ENHANCED BACKGROUND ANIMATION CSS --- */
+@keyframes floatAndRotate {
+    0% {
+        transform: translate(10vw, 10vh) rotate(0deg) rotateZ(0deg) scale(0.9);
+    }
+    100% {
+        transform: translate(90vw, 90vh) rotate(360deg) rotateZ(30deg) scale(1.1);
+    }
+}
+.bg-poster {
+    position: absolute;
+    width: 280px;
+    height: 400px;
+    object-fit: cover;
+    opacity: 0.18;
+    filter: blur(2px) hue-rotate(300deg) brightness(1.2);
+    animation: floatAndRotate 35s linear infinite alternate;
+}
+
+/* --- GALAXY STREAM LOGO STYLES --- */
+#g-logo-container {
+    width: 150px;
+    height: 150px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: none;
+    z-index: 20;
+}
+#g-shape {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 15px solid var(--cyan);
+    border-top-color: transparent;
+    border-right-color: transparent;
+    box-shadow: 0 0 40px var(--cyan), 0 0 20px var(--fuchsia);
+    opacity: 0;
+    transform: scale(0.5);
+}
+#g-shape::after {
+    content: '';
+    position: absolute;
+    bottom: 30px;
+    right: -5px;
+    width: 30px;
+    height: 15px;
+    background: var(--cyan);
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 0 10px var(--cyan);
+}
+@keyframes g-reveal {
+    0% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* --- Sequential Poster Animation Styles --- */
+.splash-poster {
+    position: absolute;
+    width: 200px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    opacity: 0;
+    transform: scale(0.5) translateY(50px) rotate(0deg);
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+    filter: saturate(1.2) brightness(1.2);
+    animation: posterSlideIn 2.0s ease-out forwards;
+    z-index: 10;
+}
+@keyframes posterSlideIn {
+    0% { opacity: 0; transform: scale(0.5) translateY(50px) rotate(5deg); }
+    30% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); }
+    70% { opacity: 1; }
+    100% { opacity: 0; transform: scale(1.1) rotate(-5deg); }
+}
+
+/* --- Genre-specific Animations --- */
+.comedy-emoji {
+    position: absolute;
+    font-size: 30px;
+    animation: bounceFall 2s linear forwards;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}
+@keyframes bounceFall {
+    0% { top: -50px; opacity: 0; transform: rotate(0deg); }
+    20% { opacity: 1; }
+    80% { top: calc(100% - 50px); transform: rotate(360deg); }
+    100% { top: 100%; opacity: 0; transform: rotate(720deg); }
+}
+.horror-smoke {
+    position: absolute;
+    width: 100px; height: 100px;
+    background: rgba(50, 50, 50, 0.7);
+    border-radius: 50%;
+    filter: blur(20px);
+    animation: fadeAndGrow 3s ease-out forwards;
+}
+@keyframes fadeAndGrow {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: scale(3); opacity: 0; }
+}
+
+/* --- Animated Login Button Style --- */
+.login-btn-animated {
+    position: relative;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 8px;
+    color: var(--cyan);
+    background: transparent;
+    border: 2px solid var(--fuchsia);
+    overflow: hidden;
+    transition: all 0.4s ease;
+    text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+    cursor: pointer;
+    text-decoration: none;
+}
+.login-btn-animated:hover {
+    color: #fff;
+    box-shadow: 0 0 15px var(--fuchsia), 0 0 25px var(--fuchsia);
+    transform: translateY(-2px);
+    border-color: var(--cyan);
+}
+.login-btn-animated::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent 40%, var(--cyan) 50%, var(--fuchsia) 60%, transparent 80%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    transform: scaleX(0);
+}
+.login-btn-animated:hover::before {
+    opacity: 0.8;
+    transform: scaleX(1);
+    animation: sweep 1s ease-out infinite;
+}
+@keyframes sweep {
+    0% { transform: scaleX(1) translateX(-100%); }
+    100% { transform: scaleX(1) translateX(100%); }
+}
+
+/* --- Styles for Plot on Image Hover --- */
+.image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+.plot-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 20%, rgba(0,0,0,0));
+    backdrop-filter: blur(2px);
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+    text-align: left;
+    pointer-events: none;
+}
+.image-container:hover .plot-overlay {
+    opacity: 1;
+}
+.image-container img {
+    transition: transform 0.3s ease-in-out;
+}
+.image-container:hover img {
+    transform: scale(1.1);
+}
+
+/* --- MODAL Styles (Shared by AI and Settings) --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.modal-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+}
+.modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 90vw;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 30px rgba(236, 72, 153, 0.3);
+    z-index: 1001;
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
+}
+.modal-backdrop.active .modal-content {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: all;
+}
+.modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    color: white;
+    font-size: 20px;
+    border: 1px solid var(--fuchsia);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.modal-close-btn:hover {
+    background: var(--fuchsia);
+    transform: rotate(90deg);
+    box-shadow: 0 0 10px var(--fuchsia);
+}
+
+/* --- Settings Modal Toggle Switch --- */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+.toggle-checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #374151; /* gray-700 */
+    transition: .4s;
+    border-radius: 28px;
+}
+.toggle-label:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+.toggle-checkbox:checked + .toggle-label {
+    background-color: var(--fuchsia);
+}
+.toggle-checkbox:checked + .toggle-label:before {
+    transform: translateX(22px);
+}
